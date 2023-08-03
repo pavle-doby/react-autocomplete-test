@@ -1,5 +1,5 @@
 import "./Autocomplete.styles.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "../../atoms/Input/Input.component";
 import { AutocompleteProps } from "./Autocomplete.models";
 import { Loading } from "../../atoms/Loading/Loading.component";
@@ -9,11 +9,15 @@ export function Autocomplete<OptionType>(
   props: AutocompleteProps<OptionType>
 ): JSX.Element {
   const [query, setQuery] = useState<string>("");
-  const [selected, setSelected] = useState<OptionType | null>(null);
   const [selectedStringValue, setSelectedStringValue] = useState<string>("");
 
+  useEffect(() => {
+    if (props.inputProps?.value) {
+      setQuery(props.inputProps.value);
+    }
+  }, [props.inputProps?.value]);
+
   function handleOnSelect(option: OptionType) {
-    setSelected(option);
     setSelectedStringValue(props.getOptionLabel(option));
     setQuery("");
     props.onSelect(option);
@@ -22,7 +26,6 @@ export function Autocomplete<OptionType>(
   function handleOnChange(event: React.ChangeEvent<HTMLInputElement>) {
     const query = event.target.value;
     setQuery(query);
-    setSelected(null);
     setSelectedStringValue("");
     props.onChange(event);
   }
@@ -31,6 +34,15 @@ export function Autocomplete<OptionType>(
     const label = props.getOptionLabel(option);
     const newText = highlightText(label, query);
     return newText;
+  }
+
+  function handleOnKeyDown(
+    event: React.KeyboardEvent<HTMLLIElement>,
+    option: OptionType
+  ) {
+    if (event.key === "Enter") {
+      handleOnSelect(option);
+    }
   }
 
   return (
@@ -56,8 +68,11 @@ export function Autocomplete<OptionType>(
           )}
           {props.options.map((option, i) => (
             <li
-              onClick={() => handleOnSelect(option)}
               key={i}
+              className="autocomplete__options-item"
+              tabIndex={0}
+              onKeyDown={(event) => handleOnKeyDown(event, option)}
+              onClick={() => handleOnSelect(option)}
               dangerouslySetInnerHTML={{
                 __html: getHighlightText(option, query),
               }}
