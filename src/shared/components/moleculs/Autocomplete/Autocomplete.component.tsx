@@ -1,5 +1,5 @@
 import "./Autocomplete.styles.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "../../atoms/Input/Input.component";
 import { AutocompleteProps } from "./Autocomplete.models";
 import { Loading } from "../../atoms/Loading/Loading.component";
@@ -23,6 +23,16 @@ export function Autocomplete<OptionType>(
   /**
    * ************************************
    *
+   * Component Refs
+   *
+   * ************************************
+   */
+
+  const autocompleteRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * ************************************
+   *
    * Component State
    *
    * ************************************
@@ -30,6 +40,29 @@ export function Autocomplete<OptionType>(
 
   const [query, setQuery] = useState<string>("");
   const [selectedStringValue, setSelectedStringValue] = useState<string>("");
+  const [isOpen, setIsOpen] = useState<boolean>(true);
+
+  /**
+   * ************************************
+   *
+   * Component Hooks
+   *
+   * ************************************
+   */
+
+  useEffect(() => {
+    document.addEventListener("click", handleDisplayOnClick);
+
+    return () => {
+      document.removeEventListener("click", handleDisplayOnClick);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (props.inputProps?.value) {
+      setQuery(props.inputProps.value);
+    }
+  }, [props.inputProps?.value]);
 
   /**
    * ************************************
@@ -38,12 +71,6 @@ export function Autocomplete<OptionType>(
    *
    * ************************************
    */
-
-  useEffect(() => {
-    if (props.inputProps?.value) {
-      setQuery(props.inputProps.value);
-    }
-  }, [props.inputProps?.value]);
 
   function handleOnSelect(option: OptionType) {
     setSelectedStringValue(props.getOptionLabel(option));
@@ -75,21 +102,35 @@ export function Autocomplete<OptionType>(
    * ************************************
    */
 
+  /**
+   * Returns the highlighted label of an `option` based on the `query`
+   */
   function getHighlightText(option: OptionType, query: string) {
     const label = props.getOptionLabel(option);
     const newText = highlightText(label, query);
     return newText;
   }
 
+  /**
+   * Handles opening/closing of the autocomplete options wrapper when clicking outside of the component
+   */
+  function handleDisplayOnClick(event: MouseEvent) {
+    if (autocompleteRef.current?.contains(event.target as Node)) {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+  }
+
   return (
-    <div className="autocomplete">
+    <div className="autocomplete" ref={autocompleteRef}>
       <Input
         {...props.inputProps}
         value={selectedStringValue || query}
         onChange={handleOnChange}
       />
 
-      {!props.options?.length && query && props.isLoading && (
+      {isOpen && !props.options?.length && query && props.isLoading && (
         <ul className="autocomplete__options">
           <li className="autocomplete__options-item">
             <Loading />
@@ -97,7 +138,7 @@ export function Autocomplete<OptionType>(
         </ul>
       )}
 
-      {props.options?.length && !selectedStringValue ? (
+      {isOpen && props.options?.length && !selectedStringValue ? (
         <ul className="autocomplete__options">
           {props.isLoading && (
             <li className="autocomplete__options-item">
