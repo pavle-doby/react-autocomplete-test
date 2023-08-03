@@ -1,0 +1,18 @@
+.loading {
+  animation: blink-animation 1s steps(10, start) infinite;
+  -webkit-animation: blink-animation 1s steps(10, start) infinite;
+  transition: all 0.9s;
+}
+
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    visibility: hidden;
+    opacity: 1;
+  }
+}

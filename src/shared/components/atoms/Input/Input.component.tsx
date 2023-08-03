@@ -1,15 +1,15 @@
-import "./Input.component.css";
-import { InputParams } from "./Input.models";
+import "./Input.styles.css";
+import { InputProps } from "./Input.models";
 
-export function Input(params: InputParams): JSX.Element {
+export function Input(props: InputProps): JSX.Element {
   return (
     <label className="input-wrapper">
-      {params.label ? (
-        <span className="input-wrapper__label">{params.label}</span>
+      {props.label ? (
+        <span className="input-wrapper__label">{props.label}</span>
       ) : (
         <></>
       )}
-      <input className="input-wrapper__input" {...params} />
+      <input className="input-wrapper__input" {...props} />
     </label>
   );
 }

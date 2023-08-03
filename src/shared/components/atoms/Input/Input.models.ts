@@ -1,4 +1,4 @@
-export class InputParams {
+export class InputProps {
   label?: string;
   type?: string;
   name?: string;
