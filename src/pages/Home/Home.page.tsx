@@ -1,7 +1,7 @@
 import "./Home.page.css";
 import { useState } from "react";
 import { Autocomplete } from "../../shared/components/moleculs/Autocomplete/Autocomplete.component";
-import { Countries } from "../../services/Countiries.service";
+import { Countries } from "../../services/Countries.service";
 import { Country } from "../../shared/models/Country.model";
 import { debounce } from "../../utils/debounce.util";
 
