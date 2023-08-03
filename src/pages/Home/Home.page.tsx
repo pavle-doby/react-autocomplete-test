@@ -1,6 +1,6 @@
+import "./Home.page.css";
 import { useState } from "react";
 import { Autocomplete } from "../../shared/components/moleculs/Autocomplete/Autocomplete.component";
-import "./Home.page.css";
 import { Countries } from "../../services/Countiries.service";
 import { Country } from "../../shared/models/Country.model";
 import { debounce } from "../../utils/debounce.util";
@@ -35,9 +35,13 @@ export function Home() {
   }
 
   return (
-    <div>
+    <div className="home">
       <h1>Home</h1>
       <Autocomplete
+        inputProps={{
+          label: "Country",
+          placeholder: "Eg. Serbia",
+        }}
         options={options}
         isLoading={isLoading}
         onChange={debounceHandleOnChange}
