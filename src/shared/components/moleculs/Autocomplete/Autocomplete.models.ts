@@ -5,6 +5,6 @@ export interface AutocompleteProps<OptionType> {
   inputProps?: InputProps;
   isLoading?: boolean;
   getOptionLabel: (option: OptionType) => string;
-  onSelect: (option: OptionType) => void;
   onChange: (e: any) => void;
+  onSelect?: (option: OptionType) => void;
 }

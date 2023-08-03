@@ -5,11 +5,39 @@ import { AutocompleteProps } from "./Autocomplete.models";
 import { Loading } from "../../atoms/Loading/Loading.component";
 import { highlightText } from "../../../../utils/highlightText.util";
 
+/**
+ * TODO: What needs to be done so this component is god tier and production ready?
+ *
+ * 1. Add error handling and error states
+ * 2. Add tests
+ * 3. Improve customization of the component (eg. custom Rendering for `options`) // if needed based on the requirements
+ * 4. Handle more on keyboard events like arrow up, arrow down, etc.
+ * 5. Investing more time into optimization
+ * 6. Write better documentation
+ * 7. Potentially add it to storybook
+ *
+ */
 export function Autocomplete<OptionType>(
   props: AutocompleteProps<OptionType>
 ): JSX.Element {
+  /**
+   * ************************************
+   *
+   * Component State
+   *
+   * ************************************
+   */
+
   const [query, setQuery] = useState<string>("");
   const [selectedStringValue, setSelectedStringValue] = useState<string>("");
+
+  /**
+   * ************************************
+   *
+   * Handling Component State and Events
+   *
+   * ************************************
+   */
 
   useEffect(() => {
     if (props.inputProps?.value) {
@@ -20,7 +48,7 @@ export function Autocomplete<OptionType>(
   function handleOnSelect(option: OptionType) {
     setSelectedStringValue(props.getOptionLabel(option));
     setQuery("");
-    props.onSelect(option);
+    props.onSelect?.(option);
   }
 
   function handleOnChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -28,12 +56,6 @@ export function Autocomplete<OptionType>(
     setQuery(query);
     setSelectedStringValue("");
     props.onChange(event);
-  }
-
-  function getHighlightText(option: OptionType, query: string) {
-    const label = props.getOptionLabel(option);
-    const newText = highlightText(label, query);
-    return newText;
   }
 
   function handleOnKeyDown(
@@ -45,6 +67,20 @@ export function Autocomplete<OptionType>(
     }
   }
 
+  /**
+   * ************************************
+   *
+   * Helper/Other Functions
+   *
+   * ************************************
+   */
+
+  function getHighlightText(option: OptionType, query: string) {
+    const label = props.getOptionLabel(option);
+    const newText = highlightText(label, query);
+    return newText;
+  }
+
   return (
     <div className="autocomplete">
       <Input
@@ -52,6 +88,7 @@ export function Autocomplete<OptionType>(
         value={selectedStringValue || query}
         onChange={handleOnChange}
       />
+
       {!props.options?.length && query && props.isLoading && (
         <ul className="autocomplete__options">
           <li className="autocomplete__options-item">
@@ -59,6 +96,7 @@ export function Autocomplete<OptionType>(
           </li>
         </ul>
       )}
+
       {props.options?.length && !selectedStringValue ? (
         <ul className="autocomplete__options">
           {props.isLoading && (

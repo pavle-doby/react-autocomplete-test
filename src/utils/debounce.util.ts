@@ -1,3 +1,6 @@
+/**
+ * Purpose: Debounce function for number of milliseconds
+ */
 export function debounce(func: (...args: any[]) => any, wait: number = 300) {
   let timeout: number;
   return function executedFunction(...args: any[]) {
