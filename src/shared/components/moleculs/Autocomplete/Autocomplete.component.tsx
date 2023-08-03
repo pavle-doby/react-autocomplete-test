@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Input } from "../../atoms/Input/Input.component";
 import { AutocompleteProps } from "./Autocomplete.models";
 import { Loading } from "../../atoms/Loading/Loading.component";
+import { highlightText } from "../../../../utils/highlightText.util";
 
 export function Autocomplete<OptionType>(
   props: AutocompleteProps<OptionType>
@@ -24,6 +25,12 @@ export function Autocomplete<OptionType>(
     setSelected(null);
     setSelectedStringValue("");
     props.onChange(event);
+  }
+
+  function getHighlightText(option: OptionType, query: string) {
+    const label = props.getOptionLabel(option);
+    const newText = highlightText(label, query);
+    return newText;
   }
 
   return (
@@ -48,9 +55,13 @@ export function Autocomplete<OptionType>(
             </li>
           )}
           {props.options.map((option, i) => (
-            <li onClick={() => handleOnSelect(option)} key={i}>
-              {props.getOptionLabel(option)}
-            </li>
+            <li
+              onClick={() => handleOnSelect(option)}
+              key={i}
+              dangerouslySetInnerHTML={{
+                __html: getHighlightText(option, query),
+              }}
+            ></li>
           ))}
         </ul>
       ) : (
